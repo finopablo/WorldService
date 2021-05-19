@@ -2,17 +2,19 @@ package edu.utn.countries.WorldService.controller;
 
 import edu.utn.countries.WorldService.domain.Country;
 import edu.utn.countries.WorldService.dto.StateDto;
+import edu.utn.countries.WorldService.dto.UserDto;
 import edu.utn.countries.WorldService.exceptions.CountryExistsException;
 import edu.utn.countries.WorldService.exceptions.CountryNotExistsException;
 import edu.utn.countries.WorldService.service.CountryService;
 import edu.utn.countries.WorldService.service.StateService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.ModelMap;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -20,7 +22,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @RestController
 @RequestMapping(value = "/api/countries")
 public class CountryController {
@@ -80,8 +82,10 @@ public class CountryController {
 
 
     @GetMapping(value = "{code}/states", produces = "application/json")
-    public ResponseEntity<List<StateDto>> statesByCountry(@PathVariable("code") String countryCode) {
-         List<StateDto> stateList = stateService.findStatesByCountry(countryCode).stream().map(st -> StateDto.builder().id(st.getId()).name(st.getName()).build()).collect(Collectors.toList());
+    public ResponseEntity<List<StateDto>> statesByCountry(Authentication authentication, @PathVariable("code") String countryCode, @PathVariable("client") Integer clientId) {
+        UserDto user = (UserDto) authentication.getPrincipal();
+        log.info("Connected User :" + authentication.getPrincipal());
+        List<StateDto> stateList = stateService.findStatesByCountry(countryCode).stream().map(st -> StateDto.builder().id(st.getId()).name(st.getName()).build()).collect(Collectors.toList());
         return response(stateList);
     }
 

@@ -12,3 +12,11 @@ CREATE TABLE states
     name varchar(50) NOT NULL,
     constraint  fk_state_country foreign key (country_code) references countries(code)
 );
+
+
+CREATE TABLE users
+(
+    id integer AUTO_INCREMENT primary key,
+    username varchar(50),
+    password varchar(50)
+);

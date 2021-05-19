@@ -26,3 +26,5 @@ values ('Buenos Aires', 'AR'),
        ('Antioquia', 'CO'),
        ('Leticia', 'CO'),
        ('Lima', 'PE');
+
+INSERT INTO users(username, password) values ('admin', '1234'),('pablo','1234');
