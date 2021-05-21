@@ -48,7 +48,7 @@ public class CountryService {
     }
 
 
-    public List<Country> filterCountriesByName(String name) {
-        return countryRepository.findByName(name);
+    public Page<Country> filterCountriesByName(String name, Pageable pageable) {
+        return countryRepository.findByName(name, pageable);
     }
 }

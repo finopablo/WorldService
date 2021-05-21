@@ -13,5 +13,5 @@ import java.util.List;
 public interface CountryRepository  extends CrudRepository<Country, String> {
    List<Country> findByNameStartsWith(String name);
    Page<Country> findAll(Pageable pageable);
-   List<Country> findByName(String name);
+   Page<Country> findByName(String name,Pageable pageable);
 }

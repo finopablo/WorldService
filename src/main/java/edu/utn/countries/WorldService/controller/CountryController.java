@@ -48,9 +48,10 @@ public class CountryController {
 
 
     @GetMapping(produces = "application/json", params = {"name"})
-    public ResponseEntity<List<Country>> countriesByName(@RequestParam("name") String name) {
-        List<Country> filteredList = countryService.filterCountriesByName(name);
-        return response(filteredList);
+    public ResponseEntity<List<Country>> countriesByName(@RequestParam("name") String name, Pageable pageable) {
+        Page<Country> page = countryService.filterCountriesByName(name, pageable);
+        List<Country> filteredList = page.getContent();
+        return response(filteredList, page);
     }
 
     @GetMapping(produces = "application/json")
@@ -89,6 +90,13 @@ public class CountryController {
         return response(stateList);
     }
 
+    private ResponseEntity response(List list, Page page) {
+        HttpStatus status = !list.isEmpty() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return ResponseEntity.status(status).
+                header("X-Total-Count", Long.toString(page.getTotalElements())).
+                header("X-Total-Pages", Long.toString(page.getTotalPages())).
+                body(page.getContent());
+    }
 
 
     private ResponseEntity response(List list) {
