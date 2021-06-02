@@ -30,20 +30,19 @@ public class CountryController {
 
     private final CountryService countryService;
     private final StateService stateService;
-    private final ModelMapper modelMapper;
+
 
     @Autowired
-    public CountryController(CountryService countryService, StateService stateService, ModelMapper modelMapper) {
+    public CountryController(CountryService countryService, StateService stateService) {
         this.countryService = countryService;
         this.stateService = stateService;
-        this.modelMapper = modelMapper;
     }
 
 
     @GetMapping(produces = "application/json", params = {"startWith"})
     public ResponseEntity<List<Country>> countriesByNameLike(@RequestParam("startWith") String name) {
         List<Country> filteredList = countryService.filterCountries(name);
-        return ResponseEntity.status(filteredList.size() != 0 ? HttpStatus.OK : HttpStatus.NO_CONTENT).body(filteredList);
+        return response(filteredList);
     }
 
 
@@ -54,14 +53,16 @@ public class CountryController {
         return response(filteredList, page);
     }
 
+
+    /**
+     * Returns a pageable list of countries
+     * @param pageable
+     * @return
+     */
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<Country>> allCountries(Pageable pageable) {
-        Page p = countryService.allCountries(pageable);
-        return ResponseEntity.
-                status(HttpStatus.OK).
-                header("X-Total-Count", Long.toString(p.getTotalElements())).
-                header("X-Total-Pages", Long.toString(p.getTotalPages())).
-                body(p.getContent());
+        Page page = countryService.allCountries(pageable);
+        return response(page);
     }
 
     @GetMapping(value = "{code}", produces = "application/json")
@@ -103,4 +104,13 @@ public class CountryController {
         return ResponseEntity.status(list.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK).body(list);
     }
 
+    private ResponseEntity response(Page page) {
+        HttpStatus httpStatus = page.getContent().isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.
+                status(httpStatus).
+                header("X-Total-Count", Long.toString(page.getTotalElements())).
+                header("X-Total-Pages", Long.toString(page.getTotalPages())).
+                body(page.getContent());
+
+    }
 }

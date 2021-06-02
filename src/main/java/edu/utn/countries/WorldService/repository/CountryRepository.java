@@ -3,6 +3,7 @@ package edu.utn.countries.WorldService.repository;
 import edu.utn.countries.WorldService.domain.Country;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
